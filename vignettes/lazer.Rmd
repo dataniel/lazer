@@ -12,69 +12,157 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 library(lazer)
 ```
 
-lazer gathers the readers and writers of day-to-day work. They share three
+lazer gathers the readers and writers of day-to-day work, so a team has
+one place for them and new readers can be added there. They share three
 habits: they are quiet when all is well, they report every problem in one
 message, and they never drop or reinterpret data without saying so.
 
 ## Many files at once: `read_files()`
 
-A production script often starts with one `read_*()` call per file.
-`read_files()` replaces the block: it expands paths with glue syntax,
-checks that every file exists before reading anything, picks the reader
-from the extension, and names the results.
+Reading a set of files normally takes a small pipeline: `list.files()`, a
+loop or `purrr::map()`, and manual naming. `read_files()` does it in one
+call: it expands paths with glue syntax, checks that *every* file exists
+before reading anything, picks the reader from the extension, and names
+the results. A single path returns the object directly; several return a
+named list.
 
 ```{r}
-lst <- read_files("data/dat{2020:2023}.parquet", names = 2020:2023)
+df  <- read_files("data/results.parquet")
+lst <- read_files("data/dat{0:9}.parquet", names = 0:9)
+```
 
-df <- read_files("data/dat{2020:2023}.parquet", names = 2020:2023,
-                 out = "bind", .id = "year")
+Supported formats: `csv`, `tsv`, `parquet`, `feather`, `xlsx`, `xls`,
+`rds`, `sas7bdat`, `sav`, `por`, `xpt`, `dta`, `json`, `ndjson`, `jsonl`,
+`yaml`, `yml`, `txt`. CSV files are read as semicolon-separated with a
+decimal comma, the Danish convention; pass `reader = readr::read_csv` for
+comma-separated files. Any reader works:
+
+```{r}
+read_files("data/dat{0:9}.parquet",
+           reader = \(x) arrow::read_parquet(x, col_select = 1:5))
 ```
 
 A file that fails to read does not stop the others; all failures are
-reported together at the end. When the files cannot be stacked as they
-are, only the columns whose types clash are re-typed, and the warning names
-them. CSV files are read as semicolon-separated with a decimal comma.
+reported together at the end, each with its file. Column names are
+lowercased by default (`.lowercase = FALSE` to keep them).
+
+**Binding.** `out = "bind"` stacks the files, and `.id` records where each
+row came from (numeric when `names` is). When a column's types cannot be
+combined across files, a warning names it, and only that column is
+re-typed with `readr::parse_guess()`; every other column keeps its type.
+`daos::view_types()` shows which file differs.
+
+```{r}
+read_files("data/dat{2020:2024}.parquet", names = 2020:2024,
+           out = "bind", .id = "year")
+```
+
+**Unpacking.** `out = "unpack"` assigns each file as its own variable in
+the calling environment, and refuses to overwrite existing ones unless
+`.overwrite = TRUE`.
+
+```{r}
+read_files("data/dat{0:9}.parquet", names = paste0("dat", 0:9), out = "unpack")
+```
 
 ## Excel: `read_workbook()` and `inspect_excel()`
 
-`readxl` reads the smallest rectangle around every non-empty cell, so a
-title becomes the header and a source note becomes a row. `read_workbook()`
-reads every sheet and finds the table on each instead, and one warning lists
-what was left outside:
+`readxl::read_excel()` reads one sheet, and on that sheet the smallest
+rectangle around *every* non-empty cell. In a published workbook that
+means the title becomes the header, the source note becomes a row, and a
+comment to the right becomes a column named `...7`. `read_workbook()`
+reads every sheet into a named list and finds the table on each: the
+largest block of cells not split by an empty row or column, with title
+rows on top left out. Whatever lies outside is not read, and one warning
+says what and where:
 
 ```{r}
 sheets <- read_workbook("data/report.xlsx")
+#> Warning: 'report.xlsx': cells outside the area read on 1 sheet were not read:
+#> * Report: F4 right of B3:C6 ("note")
+#> * Report: B9 below B3:C6 ("Source: DST")
 ```
 
-Choose the area yourself when needed: a range, one per sheet, a named range
-from the workbook, or a defined Excel table.
+Choose the area yourself when needed: a range, one per sheet (`NA` keeps
+the automatic one), a named range from the workbook, or a defined Excel
+table, which keeps its range when rows are added.
 
 ```{r}
 df     <- read_workbook("data/report.xlsx", range = "Report!B3:F40")
 sheets <- read_workbook("data/report.xlsx", range = c(Report = "B3:F40", Notes = NA))
-sales  <- read_workbook("data/report.xlsx", range = "Salesdata")
+sales  <- read_workbook("data/report.xlsx", range = "Salesdata")   # Name Manager
 tables <- read_workbook("data/report.xlsx", table = TRUE)
 ```
 
-`inspect_excel()` runs the same check without reading, and returns the
-blocks outside the table as a tibble, empty when the layout is clean.
+`inspect_excel()` runs the same check without reading and returns the
+blocks as a tibble, empty when the layout is clean, so it can serve as a
+checkpoint before a scheduled read.
+
+Everything is read with readxl's fast reader, twice: once as text to find
+the table, once for the table itself. Password-protected workbooks cannot
+be read by readxl; `read_workbook()` says so instead of failing with a zip
+error.
 
 ## Presentable Excel output: `write_excel()`
 
+This function exists because a plain data export is hard to read for the
+people the file is meant for. The complaint from a colleague who works
+with macroeconomic statistics was concrete: no frozen header, no thousand
+separators, no rounding. `writexl::write_xlsx()` is fast but writes exactly
+such unformatted files, and `openxlsx2` can do all the styling but wants a
+workbook object, worksheets, styles and a save call. `write_excel()` sits
+in between: one call, with defaults that make the file presentable.
+
+- Numeric columns with at least one absolute value of 1,000 or more get a
+  thousand separator and no displayed decimals (`#,##0`); the stored values
+  are not rounded. `digits = 2` shows two decimals, `digits = NULL` turns
+  the formatting off.
+- Year-like columns are left alone: a numeric column where every value is
+  a whole number between 1800 and 2200 is taken for years, so `2020` is not
+  shown as `2.020`. Turn it off with `detect_years = FALSE`, and use
+  `skip_fmt` for columns the rule cannot guess (e.g. period codes like
+  `202001`).
+- `NA` is a blank cell, the header row is bold, and the first row is frozen
+  (`freeze_header = FALSE` to turn it off).
+
+Only `.xlsx` can be written; another extension fails early.
+
 ```{r}
-write_excel(list(Overview = overview, Detail = detail), "out.xlsx")
-write_excel(list(Appendix = extra), "out.xlsx", mode = "append")
+write_excel(mtcars, "output.xlsx")                              # sheet "Sheet1"
+write_excel(list(Cars = mtcars, Iris = iris), "output.xlsx")    # one sheet each
 ```
 
-Headers are bold and frozen, and large numbers get a thousand separator
-without rounding the stored values. Year-like columns are left alone.
+`mode = "append"` adds sheets to an existing file and fails on a name that
+is taken; `mode = "replace"` replaces matching sheets and adds new ones,
+keeping their positions; `mode = "overwrite"` replaces the whole file.
+Sheet names are matched ignoring case.
+
+```{r}
+write_excel(list(Bilag = iris), "output.xlsx", mode = "append")
+write_excel(list(Cars = mtcars), "output.xlsx", mode = "replace")
+write_excel(mtcars, "output.xlsx", as_table = TRUE)    # filter arrows, banded rows
+```
+
+## Microsoft Access: `read_access()`
+
+Connects to an `.mdb` or `.accdb` file via ODBC, runs a SQL query and
+returns a tibble. Needs the `DBI` and `odbc` packages and an Access ODBC
+driver. `verbosity` is `"compact"` (one line per file, the default),
+`"full"` or `"quiet"`.
+
+```{r}
+df <- read_access("data/sales.mdb", "SELECT * FROM Customers")
+```
 
 ## Greenlandic TA files
 
-`read_ta()` reads both layouts and recognises which by itself.
+There are two layouts: version 1, the old one, and version 2, the new
+140-character one. `read_ta()` reads both and recognises which by itself.
 `write_ta()` writes the one you name, since it has to match the receiver,
-and refuses any value it cannot write exactly, listing every one.
-`convert_ta()` converts a file between the layouts.
+and only writes what `read_ta()` reads back unchanged: a value that would
+not fit its field, or would lose decimals, is an error listing every such
+value, so no file with shifted fields is written. `convert_ta()` converts a
+file between the layouts, with the same checks.
 
 ```{r}
 ta <- read_ta("ta.file")
@@ -82,6 +170,6 @@ write_ta(ta, "out.ta", version = 2)
 convert_ta("old.ta", "new.ta", to = 2)
 ```
 
-Both layouts are written as one small table each at the top of
-`R/ta.R`. The reader and the writer only follow those tables, so a change in
-a layout is a change there.
+Both layouts are written as one small table each at the top of `R/ta.R`:
+field, start, end, type. The reader and the writer only follow those
+tables, so a change in a layout is a change there.
