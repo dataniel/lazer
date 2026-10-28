@@ -24,16 +24,17 @@ runs its layout check on its own.
 - [`read_access()`](https://dataniel.github.io/lazer/reference/read_access.md)
   : Read data from a Microsoft Access database
 
-## Greenlandic TA files
+## Greenlandic supply and use tables (SUT)
 
-Both layouts: version 1 (old) and version 2 (140 characters).
+SUT files, TA files in Danish (tilgang-anvendelse), in both layouts:
+version 1 (old) and version 2 (140 characters).
 
-- [`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md) :
-  Read a Greenlandic TA file
-- [`write_ta()`](https://dataniel.github.io/lazer/reference/write_ta.md)
-  : Write a Greenlandic TA file
-- [`convert_ta()`](https://dataniel.github.io/lazer/reference/convert_ta.md)
-  : Convert a Greenlandic TA file between the two layouts
+- [`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md)
+  : Read a Greenlandic SUT file
+- [`write_sut()`](https://dataniel.github.io/lazer/reference/write_sut.md)
+  : Write a Greenlandic SUT file
+- [`convert_sut()`](https://dataniel.github.io/lazer/reference/convert_sut.md)
+  : Convert a Greenlandic SUT file between the two layouts
 
 ## Package
 

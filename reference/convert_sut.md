@@ -1,20 +1,20 @@
-# Convert a Greenlandic TA file between the two layouts
+# Convert a Greenlandic SUT file between the two layouts
 
-Reads a TA file in one layout and writes it in the other: version 1 to
-version 2, or version 2 to version 1.
+Reads a SUT file (TA file) in one layout and writes it in the other:
+version 1 to version 2, or version 2 to version 1.
 
 ## Usage
 
 ``` r
-convert_ta(path, out, to)
+convert_sut(path, out, to)
 ```
 
 ## Arguments
 
 - path:
 
-  Path to the TA file to convert. Its version is recognised, as in
-  [`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md).
+  Path to the SUT file to convert. Its version is recognised, as in
+  [`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md).
 
 - out:
 
@@ -31,9 +31,9 @@ convert_ta(path, out, to)
 ## Details
 
 This is
-[`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md)
+[`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md)
 followed by
-[`write_ta()`](https://dataniel.github.io/lazer/reference/write_ta.md),
+[`write_sut()`](https://dataniel.github.io/lazer/reference/write_sut.md),
 with their checks:
 
 - **1 to 2:** version 2 has no `prim`, `afstm` or `fval`. If any of them
@@ -46,14 +46,14 @@ with their checks:
 
 ## See also
 
-[`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md) for
-both layouts.
+[`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md)
+for both layouts.
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-convert_ta("old.ta", "new.ta", to = 2)
-convert_ta("new.ta", "old.ta", to = 1)
+convert_sut("old.sut", "new.sut", to = 2)
+convert_sut("new.sut", "old.sut", to = 1)
 } # }
 ```

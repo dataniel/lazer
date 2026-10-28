@@ -21,10 +21,12 @@ One place for the readers and writers of day-to-day work. Start here:
 - [`read_access()`](https://dataniel.github.io/lazer/reference/read_access.md)
   reads from a Microsoft Access database.
 
-- [`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md)
+- [`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md),
+  [`write_sut()`](https://dataniel.github.io/lazer/reference/write_sut.md)
   and
-  [`write_ta()`](https://dataniel.github.io/lazer/reference/write_ta.md)
-  read and write Greenlandic TA files in both layouts.
+  [`convert_sut()`](https://dataniel.github.io/lazer/reference/convert_sut.md)
+  read, write and convert Greenlandic supply and use table files (SUT;
+  TA files in Danish) in both layouts.
 
 The readers share a few habits: they are quiet when all is well, check
 what they read, and report every problem in one message instead of

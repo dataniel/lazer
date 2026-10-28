@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Read and Write the Files an Economics Team Works with">
-<meta name="description" content="Readers and writers for the files of day-to-day statistical and economic work: many files at once in most formats, every sheet of an Excel workbook with the table found on each sheet, presentable Excel output, Microsoft Access databases, and Greenlandic TA files in both layouts. Readers check what they read, report every problem in one message, and stay quiet when all is well.">
-<meta property="og:description" content="Readers and writers for the files of day-to-day statistical and economic work: many files at once in most formats, every sheet of an Excel workbook with the table found on each sheet, presentable Excel output, Microsoft Access databases, and Greenlandic TA files in both layouts. Readers check what they read, report every problem in one message, and stay quiet when all is well.">
+<meta name="description" content="Readers and writers for the files of day-to-day statistical and economic work: many files at once in most formats, every sheet of an Excel workbook with the table found on each sheet, presentable Excel output, Microsoft Access databases, and Greenlandic supply and use table (SUT) files in both layouts. Readers check what they read, report every problem in one message, and stay quiet when all is well.">
+<meta property="og:description" content="Readers and writers for the files of day-to-day statistical and economic work: many files at once in most formats, every sheet of an Excel workbook with the table found on each sheet, presentable Excel output, Microsoft Access databases, and Greenlandic supply and use table (SUT) files in both layouts. Readers check what they read, report every problem in one message, and stay quiet when all is well.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -66,10 +66,10 @@
 <span><span class="co"># Presentable Excel output</span></span>
 <span><span class="fu"><a href="reference/write_excel.html">write_excel</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Overview <span class="op">=</span> <span class="va">overview</span>, Detail <span class="op">=</span> <span class="va">detail</span><span class="op">)</span>, <span class="st">"out.xlsx"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Greenlandic TA files, both layouts</span></span>
-<span><span class="va">ta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_ta.html">read_ta</a></span><span class="op">(</span><span class="st">"ta.file"</span><span class="op">)</span>                          <span class="co"># version recognised</span></span>
-<span><span class="fu"><a href="reference/write_ta.html">write_ta</a></span><span class="op">(</span><span class="va">ta</span>, <span class="st">"ta_new.file"</span>, version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/convert_ta.html">convert_ta</a></span><span class="op">(</span><span class="st">"old.ta"</span>, <span class="st">"new.ta"</span>, to <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Greenlandic supply and use table files (SUT, in Danish TA), both layouts</span></span>
+<span><span class="va">sut</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/read_sut.html">read_sut</a></span><span class="op">(</span><span class="st">"ta19l"</span><span class="op">)</span>                          <span class="co"># version recognised</span></span>
+<span><span class="fu"><a href="reference/write_sut.html">write_sut</a></span><span class="op">(</span><span class="va">sut</span>, <span class="st">"ta19l_new"</span>, version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/convert_sut.html">convert_sut</a></span><span class="op">(</span><span class="st">"ta19l"</span>, <span class="st">"ta19l_v2"</span>, to <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>The readers share a few habits: quiet when all is well, every problem in one message instead of one rerun per problem, and nothing dropped or reinterpreted without a word.</p>
 </div>
 <div class="section level2">
@@ -107,13 +107,13 @@
 </tr>
 <tr class="even">
 <td>
-<code><a href="reference/read_ta.html">read_ta()</a></code> / <code><a href="reference/write_ta.html">write_ta()</a></code>
+<code><a href="reference/read_sut.html">read_sut()</a></code> / <code><a href="reference/write_sut.html">write_sut()</a></code>
 </td>
-<td>Read and write Greenlandic TA files, version 1 (old) or 2 (140 characters)</td>
+<td>Read and write Greenlandic supply and use table files (SUT; TA files in Danish), version 1 (old) or 2 (140 characters)</td>
 </tr>
 <tr class="odd">
-<td><code><a href="reference/convert_ta.html">convert_ta()</a></code></td>
-<td>Convert a TA file between the two versions</td>
+<td><code><a href="reference/convert_sut.html">convert_sut()</a></code></td>
+<td>Convert a SUT file between the two versions</td>
 </tr>
 </tbody>
 </table>

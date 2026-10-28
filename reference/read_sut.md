@@ -1,19 +1,20 @@
-# Read a Greenlandic TA file
+# Read a Greenlandic SUT file
 
-Reads a Greenlandic TA file in the old layout (version 1) or the new
+Reads a Greenlandic supply and use table file (SUT; in Danish a TA file,
+*tilgang-anvendelse*) in the old layout (version 1) or the new
 140-character layout (version 2), recognising which by itself.
 
 ## Usage
 
 ``` r
-read_ta(path, version = NULL)
+read_sut(path, version = NULL)
 ```
 
 ## Arguments
 
 - path:
 
-  Path to the TA file.
+  Path to the SUT file.
 
 - version:
 
@@ -25,6 +26,11 @@ read_ta(path, version = NULL)
 A tibble with one column per field: 12 for version 1, 9 for version 2.
 
 ## Details
+
+**The fields.** One line per product (`nrnr`), transaction (`trans`) and
+industry (`brch`), with the value at each price layer: basic prices
+(`bas`), wholesale and retail margins (`eng`, `det`), taxes (`afg`), VAT
+(`moms`) and purchasers' prices (`kbx`).
 
 **The layouts.** Character positions, 1-based. Text fields are read as
 character, the rest as numbers.
@@ -59,13 +65,13 @@ messages are those of the file.
 
 ## See also
 
-[`write_ta()`](https://dataniel.github.io/lazer/reference/write_ta.md)
+[`write_sut()`](https://dataniel.github.io/lazer/reference/write_sut.md)
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-df <- read_ta("ta.file")
-df <- read_ta("ta.file", version = 2)
+df <- read_sut("ta19l")
+df <- read_sut("ta19l", version = 2)
 } # }
 ```
