@@ -1,8 +1,8 @@
 # lazer 0.1.0
 
-* First version. The readers and writers move here from daos, which
-  forwards to them so existing scripts keep working: `read_files()`,
-  `read_workbook()`, `inspect_excel()`, `write_excel()` and `read_access()`.
+* First version. The readers and writers move here from daos:
+  `read_files()`, `read_workbook()`, `inspect_excel()`, `write_excel()` and
+  `read_access()`.
 
 * The TA functions are one family for both layouts. `read_ta()` recognises
   version 1 and 2 by itself, `write_ta(version = )` writes either, and

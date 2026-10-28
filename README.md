@@ -49,6 +49,6 @@ reinterpreted without a word.
 
 ## Relation to daos
 
-These functions used to live in [daos](https://github.com/dataniel/daos),
-which now forwards to lazer, so existing scripts keep working. New code
-should use `library(lazer)`.
+These functions used to live in [daos](https://github.com/dataniel/daos).
+The two packages are independent; use `library(lazer)` for the readers and
+writers.
