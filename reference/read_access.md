@@ -24,13 +24,13 @@ read_access(path, sql, verbosity = c("compact", "full", "quiet"))
 
   Level of status output. One of:
 
-  - `"full"` – header, per-step spinners, and summary. Best for
+  - `"full"` - header, per-step spinners, and summary. Best for
     interactive single-file use.
 
-  - `"compact"` – a single-line summary per file. Best when iterating
+  - `"compact"` - a single-line summary per file. Best when iterating
     over many databases. This is the default.
 
-  - `"quiet"` – no output.
+  - `"quiet"` - no output.
 
 ## Value
 
@@ -41,11 +41,11 @@ containing the query result.
 
 ``` r
 if (FALSE) { # \dontrun{
-# single file – use full output
+# single file - use full output
 data <- read_access("sales.mdb", "SELECT * FROM Customers",
                     verbosity = "full")
 
-# many files – compact output is the default
+# many files - compact output is the default
 files <- list.files("data", pattern = "\\.mdb$", full.names = TRUE)
 all_data <- lapply(files, \(f) read_access(f, "SELECT * FROM Sales"))
 } # }
