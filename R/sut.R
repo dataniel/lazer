@@ -1,11 +1,16 @@
-# The two TA layouts ---------------------------------------------------------
+# The two SUT layouts --------------------------------------------------------
+#
+# SUT files hold the supply and use tables (tilgang-anvendelse, in Danish
+# "TA") as fixed-width lines: one line per product, transaction and industry,
+# with the value at each price layer from basic prices (bas) through trade
+# margins (eng, det), taxes (afg) and VAT (moms) to purchasers' prices (kbx).
 #
 # One row per field: where it sits on the line (1-based characters, `end = NA`
 # runs to the end of the line), whether it is text or a number, and whether
-# write_ta() writes it. read_ta() and write_ta() only follow these tables, so
+# write_sut() writes it. read_sut() and write_sut() only follow these tables, so
 # a change in a layout is a change here and nowhere else.
 
-ta_layouts <- list(
+sut_layouts <- list(
   # Version 1, the old layout. Fields are separated by one blank.
   `1` = tibble::tribble(
     ~field,  ~start, ~end, ~type,    ~written,
@@ -37,12 +42,18 @@ ta_layouts <- list(
   )
 )
 
-#' Read a Greenlandic TA file
+#' Read a Greenlandic SUT file
 #'
-#' Reads a Greenlandic TA file in the old layout (version 1) or the new
+#' Reads a Greenlandic supply and use table file (SUT; in Danish a TA file,
+#' *tilgang-anvendelse*) in the old layout (version 1) or the new
 #' 140-character layout (version 2), recognising which by itself.
 #'
 #' @details
+#' **The fields.** One line per product (`nrnr`), transaction (`trans`) and
+#' industry (`brch`), with the value at each price layer: basic prices
+#' (`bas`), wholesale and retail margins (`eng`, `det`), taxes (`afg`), VAT
+#' (`moms`) and purchasers' prices (`kbx`).
+#'
 #' **The layouts.** Character positions, 1-based. Text fields are read as
 #' character, the rest as numbers.
 #'
@@ -73,7 +84,7 @@ ta_layouts <- list(
 #' not a silent `NA`. Empty lines are skipped; line numbers in messages are
 #' those of the file.
 #'
-#' @param path Path to the TA file.
+#' @param path Path to the SUT file.
 #' @param version `1` (old layout), `2` (new layout), or `NULL` (default) to
 #'   recognise it from the file.
 #'
@@ -82,19 +93,19 @@ ta_layouts <- list(
 #'
 #' @examples
 #' \dontrun{
-#' df <- read_ta("ta.file")
-#' df <- read_ta("ta.file", version = 2)
+#' df <- read_sut("ta19l")
+#' df <- read_sut("ta19l", version = 2)
 #' }
 #'
-#' @seealso [write_ta()]
+#' @seealso [write_sut()]
 #' @export
-read_ta <- function(path, version = NULL) {
+read_sut <- function(path, version = NULL) {
   lines <- readLines(path, warn = FALSE)
   line_no <- which(trimws(lines) != "")   # skip empty lines, keep the file's numbering
   lines <- lines[line_no]
 
-  version <- ta_read_version(lines, line_no, version)
-  layout <- ta_layouts[[version]]
+  version <- sut_read_version(lines, line_no, version)
+  layout <- sut_layouts[[version]]
 
   out <- list()
   problems <- character()
@@ -121,7 +132,7 @@ read_ta <- function(path, version = NULL) {
 
 # The version to read: the one given, or the one the lines look like. Either
 # way a file that clearly is the other version is an error.
-ta_read_version <- function(lines, line_no, version, call = rlang::caller_env()) {
+sut_read_version <- function(lines, line_no, version, call = rlang::caller_env()) {
   looks_v2 <- nchar(lines) >= 140 &
     substr(lines, 7, 16) == strrep(" ", 10) &
     substr(lines, 22, 30) == strrep(" ", 9)
@@ -130,13 +141,13 @@ ta_read_version <- function(lines, line_no, version, call = rlang::caller_env())
     if (length(lines) == 0 || !any(looks_v2)) return("1")
     if (all(looks_v2)) return("2")
     cli::cli_abort(c(
-      "Cannot tell which TA layout this file has.",
+      "Cannot tell which SUT layout this file has.",
       "x" = "{sum(looks_v2)} of {length(lines)} lines look like version 2.",
       "i" = "Give {.arg version} to read it as one of them."
     ), call = call)
   }
 
-  version <- ta_check_version(version, call = call)
+  version <- sut_check_version(version, call = call)
   short <- line_no[nchar(lines) < 140]
   if (version == "2" && length(short) > 0) {
     cli::cli_abort(c(
@@ -153,35 +164,36 @@ ta_read_version <- function(lines, line_no, version, call = rlang::caller_env())
   version
 }
 
-ta_check_version <- function(version, call = rlang::caller_env()) {
+sut_check_version <- function(version, call = rlang::caller_env()) {
   if (!(length(version) == 1 && version %in% c(1, 2))) {
     cli::cli_abort("{.arg version} must be 1 (the old layout) or 2 (the new 140-character layout).", call = call)
   }
   as.character(version)
 }
 
-#' Write a Greenlandic TA file
+#' Write a Greenlandic SUT file
 #'
-#' Writes a data frame to a Greenlandic TA file in the old layout (version 1)
+#' Writes a data frame to a Greenlandic supply and use table file (SUT; in
+#' Danish a TA file, *tilgang-anvendelse*) in the old layout (version 1)
 #' or the new 140-character layout (version 2). The layout must be named,
 #' since it has to match what the receiver reads.
 #'
 #' @details
 #' Writes the nine fields `nrnr`, `trans`, `brch`, `bas`, `eng`, `det`,
-#' `afg`, `moms` and `kbx` in the positions [read_ta()] reads them from. If
+#' `afg`, `moms` and `kbx` in the positions [read_sut()] reads them from. If
 #' `moms` is absent, it is derived: `NA` where `trans` is `"0100"` or
 #' `"0700"` (no VAT in Greenland), `0` otherwise.
 #'
 #' **The file reads back unchanged.** A fixed-width file has no delimiters,
 #' so a value wider than its field does not fail: it pushes every following
 #' field out of place, and the file still parses, into the wrong columns.
-#' `write_ta()` therefore refuses to write anything it cannot write exactly,
+#' `write_sut()` therefore refuses to write anything it cannot write exactly,
 #' and lists every offending value at once:
 #'
 #' * Numbers are right-aligned, with the fewest decimals that reproduce the
 #'   value exactly, so whole numbers have none. A number whose exact form is
 #'   wider than its field is an error, never rounded.
-#' * Text is left-aligned. Since [read_ta()] trims fields and reads blank
+#' * Text is left-aligned. Since [read_sut()] trims fields and reads blank
 #'   fields and `"NA"` as `NA`, text that is too long, empty, `"NA"`, or
 #'   starts or ends with a space is an error.
 #' * `NA` is written as a blank field.
@@ -196,27 +208,27 @@ ta_check_version <- function(version, call = rlang::caller_env()) {
 #'
 #' @examples
 #' \dontrun{
-#' write_ta(df, "ta.file", version = 2)
+#' write_sut(df, "ta19l", version = 2)
 #' }
 #'
-#' @seealso [read_ta()], which shows both layouts.
+#' @seealso [read_sut()], which shows both layouts.
 #' @export
-write_ta <- function(x, path, version) {
+write_sut <- function(x, path, version) {
   if (missing(version)) {
     cli::cli_abort(c(
-      "Say which TA layout to write.",
+      "Say which SUT layout to write.",
       "i" = "Use {.code version = 1} for the old layout or {.code version = 2} for the new 140-character one."
     ))
   }
-  version <- ta_check_version(version)
-  layout <- ta_layouts[[version]]
+  version <- sut_check_version(version)
+  layout <- sut_layouts[[version]]
   layout <- layout[layout$written, ]
 
   extra <- setdiff(names(x), layout$field)
   if (length(extra) > 0) {
     cli::cli_abort(c(
-      "Column{?s} {.field {extra}} in {.arg x} {?is not a TA field/are not TA fields}.",
-      "i" = "TA fields: {.field {layout$field}}."
+      "Column{?s} {.field {extra}} in {.arg x} {?is not a SUT field/are not SUT fields}.",
+      "i" = "SUT fields: {.field {layout$field}}."
     ))
   }
   if (!"moms" %in% names(x)) {
@@ -238,14 +250,14 @@ write_ta <- function(x, path, version) {
     value <- x[[f$field]]
 
     if (f$type == "number") {
-      text <- ta_format_number(value, width)
+      text <- sut_format_number(value, width)
       bad <- which(is.na(text) | nchar(text) > width)
       why <- sprintf("%s needs more than %d characters to be exact", format(value[bad], digits = 17), width)
       padded <- formatC(text, width = width)          # right-aligned
     } else {
       text <- ifelse(is.na(value), "", as.character(value))
       bad <- which(!is.na(value) & (nchar(text) > width | text %in% c("", "NA") | text != trimws(text)))
-      why <- sprintf('"%s" %s', text[bad], ta_text_problem(text[bad], width))
+      why <- sprintf('"%s" %s', text[bad], sut_text_problem(text[bad], width))
       padded <- formatC(text, width = width, flag = "-")  # left-aligned
     }
     problems <- c(problems, sprintf("%s, row %d: %s.", f$field, bad, why))
@@ -256,7 +268,7 @@ write_ta <- function(x, path, version) {
 
   if (length(problems) > 0) {
     cli::cli_abort(c(
-      "Cannot write {length(problems)} value{?s} so that {.fn read_ta} reads {cli::qty(length(problems))}{?it/them} back unchanged:",
+      "Cannot write {length(problems)} value{?s} so that {.fn read_sut} reads {cli::qty(length(problems))}{?it/them} back unchanged:",
       cap_bullets(problems)
     ))
   }
@@ -265,13 +277,13 @@ write_ta <- function(x, path, version) {
   invisible(path)
 }
 
-#' Convert a Greenlandic TA file between the two layouts
+#' Convert a Greenlandic SUT file between the two layouts
 #'
-#' Reads a TA file in one layout and writes it in the other: version 1 to
+#' Reads a SUT file (TA file) in one layout and writes it in the other: version 1 to
 #' version 2, or version 2 to version 1.
 #'
 #' @details
-#' This is [read_ta()] followed by [write_ta()], with their checks:
+#' This is [read_sut()] followed by [write_sut()], with their checks:
 #'
 #' * **1 to 2:** version 2 has no `prim`, `afstm` or `fval`. If any of them
 #'   holds a value, a warning says how many rows lose it.
@@ -280,8 +292,8 @@ write_ta <- function(x, path, version) {
 #'   not fit exactly is an error listing every such value, never truncated or
 #'   rounded.
 #'
-#' @param path Path to the TA file to convert. Its version is recognised, as
-#'   in [read_ta()].
+#' @param path Path to the SUT file to convert. Its version is recognised, as
+#'   in [read_sut()].
 #' @param out Path to write the converted file to. Must differ from `path`.
 #' @param to The version to convert to: `1` or `2`.
 #'
@@ -289,26 +301,26 @@ write_ta <- function(x, path, version) {
 #'
 #' @examples
 #' \dontrun{
-#' convert_ta("old.ta", "new.ta", to = 2)
-#' convert_ta("new.ta", "old.ta", to = 1)
+#' convert_sut("old.sut", "new.sut", to = 2)
+#' convert_sut("new.sut", "old.sut", to = 1)
 #' }
 #'
-#' @seealso [read_ta()] for both layouts.
+#' @seealso [read_sut()] for both layouts.
 #' @export
-convert_ta <- function(path, out, to) {
-  to <- ta_check_version(to)
+convert_sut <- function(path, out, to) {
+  to <- sut_check_version(to)
   if (normalizePath(path, mustWork = FALSE) == normalizePath(out, mustWork = FALSE)) {
     cli::cli_abort("{.arg out} must differ from {.arg path}, so the original file is kept.")
   }
 
   lines <- readLines(path, warn = FALSE)
   line_no <- which(trimws(lines) != "")
-  from <- ta_read_version(lines[line_no], line_no, NULL)
+  from <- sut_read_version(lines[line_no], line_no, NULL)
   if (from == to) {
     cli::cli_abort("{.file {basename(path)}} is already version {to}.")
   }
 
-  x <- read_ta(path, version = from)
+  x <- read_sut(path, version = from)
   if (to == "2") {
     dropped <- c("prim", "afstm", "fval")
     lost <- vapply(dropped, function(f) sum(!is.na(x[[f]])), numeric(1))
@@ -320,13 +332,13 @@ convert_ta <- function(path, out, to) {
     }
     x <- x[setdiff(names(x), dropped)]
   }
-  write_ta(x, out, version = to)
+  write_sut(x, out, version = to)
 }
 
 # The shortest fixed-point text that reads back as exactly `value`, trying
 # more decimals only for the values that need them. NA is a blank field; a
 # value with no exact form in `width` characters is NA, reported by the caller.
-ta_format_number <- function(value, width) {
+sut_format_number <- function(value, width) {
   value <- as.double(value)
   text <- ifelse(is.na(value), "", NA_character_)
   for (digits in 0:(width - 2)) {
@@ -339,9 +351,9 @@ ta_format_number <- function(value, width) {
   text
 }
 
-ta_text_problem <- function(text, width) {
+sut_text_problem <- function(text, width) {
   ifelse(nchar(text) > width, sprintf("is %d characters, the field holds %d", nchar(text), width),
   ifelse(text == "", "is empty and would read back as NA",
   ifelse(text == "NA", "would read back as NA",
-         "has leading or trailing spaces, which read_ta() trims")))
+         "has leading or trailing spaces, which read_sut() trims")))
 }

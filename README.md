@@ -25,10 +25,10 @@ sales  <- read_workbook("data/report.xlsx", range = "Salesdata")   # a named ran
 # Presentable Excel output
 write_excel(list(Overview = overview, Detail = detail), "out.xlsx")
 
-# Greenlandic TA files, both layouts
-ta <- read_ta("ta.file")                          # version recognised
-write_ta(ta, "ta_new.file", version = 2)
-convert_ta("old.ta", "new.ta", to = 2)
+# Greenlandic supply and use table files (SUT, in Danish TA), both layouts
+sut <- read_sut("ta19l")                          # version recognised
+write_sut(sut, "ta19l_new", version = 2)
+convert_sut("ta19l", "ta19l_v2", to = 2)
 ```
 
 The readers share a few habits: quiet when all is well, every problem in
@@ -44,8 +44,8 @@ reinterpreted without a word.
 | `inspect_excel()` | List the blocks of cells outside the table in a workbook |
 | `write_excel()` | Write presentable xlsx: bold, frozen header and readable number formats; create, append or replace sheets |
 | `read_access()` | Read from a Microsoft Access database via ODBC |
-| `read_ta()` / `write_ta()` | Read and write Greenlandic TA files, version 1 (old) or 2 (140 characters) |
-| `convert_ta()` | Convert a TA file between the two versions |
+| `read_sut()` / `write_sut()` | Read and write Greenlandic supply and use table files (SUT; TA files in Danish), version 1 (old) or 2 (140 characters) |
+| `convert_sut()` | Convert a SUT file between the two versions |
 
 ## Relation to daos
 

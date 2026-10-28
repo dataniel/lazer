@@ -33,13 +33,14 @@ reference:
     contents:
       - read_access
 
-  - title: Greenlandic TA files
+  - title: Greenlandic supply and use tables (SUT)
     desc: >
-      Both layouts: version 1 (old) and version 2 (140 characters).
+      SUT files, TA files in Danish (tilgang-anvendelse), in both layouts:
+      version 1 (old) and version 2 (140 characters).
     contents:
-      - read_ta
-      - write_ta
-      - convert_ta
+      - read_sut
+      - write_sut
+      - convert_sut
 
   - title: Package
     contents:

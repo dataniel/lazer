@@ -6,8 +6,8 @@ Authors@R: person("Daniel", "Madsen", email = "danielmadsen@live.dk",
 Description: Readers and writers for the files of day-to-day statistical
     and economic work: many files at once in most formats, every sheet of
     an Excel workbook with the table found on each sheet, presentable
-    Excel output, Microsoft Access databases, and Greenlandic TA files in
-    both layouts. Readers check what they read, report every problem in
+    Excel output, Microsoft Access databases, and Greenlandic supply and
+    use table (SUT) files in both layouts. Readers check what they read, report every problem in
     one message, and stay quiet when all is well.
 License: MIT + file LICENSE
 URL: https://dataniel.github.io/lazer, https://github.com/dataniel/lazer

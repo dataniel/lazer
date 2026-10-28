@@ -18,8 +18,9 @@ choose. \code{\link[=inspect_excel]{inspect_excel()}} runs its layout check on i
 \item \code{\link[=write_excel]{write_excel()}} writes presentable Excel files: bold, frozen header and
 readable number formats.
 \item \code{\link[=read_access]{read_access()}} reads from a Microsoft Access database.
-\item \code{\link[=read_ta]{read_ta()}} and \code{\link[=write_ta]{write_ta()}} read and write Greenlandic TA files in
-both layouts.
+\item \code{\link[=read_sut]{read_sut()}}, \code{\link[=write_sut]{write_sut()}} and \code{\link[=convert_sut]{convert_sut()}} read, write and convert
+Greenlandic supply and use table files (SUT; TA files in Danish) in both
+layouts.
 }
 
 The readers share a few habits: they are quiet when all is well, check

@@ -1,3 +1,3 @@
-# The TA fixtures pin the exact bytes the writers produce; never convert
+# The SUT fixtures pin the exact bytes the writers produce; never convert
 # their line endings.
-tests/testthat/fixtures/*.ta binary
+tests/testthat/fixtures/*.sut binary

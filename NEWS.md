@@ -22,10 +22,12 @@
   only the columns whose types clash; and files that share a name give a
   warning, and an error with `out = "unpack"`.
 
-* The TA functions are one family for both layouts. `read_ta()` recognises
-  version 1 and 2 by itself, `write_ta(version = )` writes either, and
-  `convert_ta()` converts a file between them. Both layouts are one table
-  each in the source, which reader and writer follow. Files are written
-  byte for byte as before. `read_ta()` now checks number fields in
-  version 1 too, and skips empty lines instead of reading them as a row
-  of `NA`.
+* The functions for supply and use table files (SUT; TA files in Danish,
+  *tilgang-anvendelse*) are one family for both layouts, replacing daos's
+  `read_ta()`, `read_ta2()`, `write_ta()` and `write_ta2()`. `read_sut()`
+  recognises version 1 and 2 by itself, `write_sut(version = )` writes
+  either, and `convert_sut()` converts a file between them. Both layouts
+  are one table each in the source, which reader and writer follow. Files
+  are written byte for byte as before. `read_sut()` now checks number
+  fields in version 1 too, and skips empty lines instead of reading them as
+  a row of `NA`.

@@ -10,8 +10,9 @@
 #' * [write_excel()] writes presentable Excel files: bold, frozen header and
 #'   readable number formats.
 #' * [read_access()] reads from a Microsoft Access database.
-#' * [read_ta()] and [write_ta()] read and write Greenlandic TA files in
-#'   both layouts.
+#' * [read_sut()], [write_sut()] and [convert_sut()] read, write and convert
+#'   Greenlandic supply and use table files (SUT; TA files in Danish) in both
+#'   layouts.
 #'
 #' The readers share a few habits: they are quiet when all is well, check
 #' what they read, and report every problem in one message instead of

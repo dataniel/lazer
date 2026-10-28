@@ -154,22 +154,27 @@ driver. `verbosity` is `"compact"` (one line per file, the default),
 df <- read_access("data/sales.mdb", "SELECT * FROM Customers")
 ```
 
-## Greenlandic TA files
+## Greenlandic supply and use tables (SUT)
+
+SUT files hold the supply and use tables, *tilgang-anvendelse* in Danish,
+which is why the files are often called TA files: one line per product,
+transaction and industry, with the value at each price layer from basic
+prices to purchasers' prices.
 
 There are two layouts: version 1, the old one, and version 2, the new
-140-character one. `read_ta()` reads both and recognises which by itself.
-`write_ta()` writes the one you name, since it has to match the receiver,
-and only writes what `read_ta()` reads back unchanged: a value that would
+140-character one. `read_sut()` reads both and recognises which by itself.
+`write_sut()` writes the one you name, since it has to match the receiver,
+and only writes what `read_sut()` reads back unchanged: a value that would
 not fit its field, or would lose decimals, is an error listing every such
-value, so no file with shifted fields is written. `convert_ta()` converts a
-file between the layouts, with the same checks.
+value, so no file with shifted fields is written. `convert_sut()` converts
+a file between the layouts, with the same checks.
 
 ```{r}
-ta <- read_ta("ta.file")
-write_ta(ta, "out.ta", version = 2)
-convert_ta("old.ta", "new.ta", to = 2)
+sut <- read_sut("ta19l")
+write_sut(sut, "ta19l_new", version = 2)
+convert_sut("ta19l", "ta19l_v2", to = 2)
 ```
 
-Both layouts are written as one small table each at the top of `R/ta.R`:
+Both layouts are written as one small table each at the top of `R/sut.R`:
 field, start, end, type. The reader and the writer only follow those
 tables, so a change in a layout is a change there.
