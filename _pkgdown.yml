@@ -1,0 +1,46 @@
+url: https://dataniel.github.io/lazer
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference]
+    right: [github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/dataniel/lazer
+
+home:
+  strip_header: true
+
+reference:
+  - title: Many files at once
+    contents:
+      - read_files
+
+  - title: Excel
+    desc: >
+      `read_workbook()` finds the table on each sheet; `inspect_excel()`
+      runs its layout check on its own.
+    contents:
+      - read_workbook
+      - inspect_excel
+      - write_excel
+
+  - title: Databases
+    contents:
+      - read_access
+
+  - title: Greenlandic TA files
+    desc: >
+      Both layouts: version 1 (old) and version 2 (140 characters).
+    contents:
+      - read_ta
+      - write_ta
+      - convert_ta
+
+  - title: Package
+    contents:
+      - lazer-package

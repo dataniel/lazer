@@ -1,0 +1,87 @@
+---
+title: "Get started with lazer"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started with lazer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+library(lazer)
+```
+
+lazer gathers the readers and writers of day-to-day work. They share three
+habits: they are quiet when all is well, they report every problem in one
+message, and they never drop or reinterpret data without saying so.
+
+## Many files at once: `read_files()`
+
+A production script often starts with one `read_*()` call per file.
+`read_files()` replaces the block: it expands paths with glue syntax,
+checks that every file exists before reading anything, picks the reader
+from the extension, and names the results.
+
+```{r}
+lst <- read_files("data/dat{2020:2023}.parquet", names = 2020:2023)
+
+df <- read_files("data/dat{2020:2023}.parquet", names = 2020:2023,
+                 out = "bind", .id = "year")
+```
+
+A file that fails to read does not stop the others; all failures are
+reported together at the end. When the files cannot be stacked as they
+are, only the columns whose types clash are re-typed, and the warning names
+them. CSV files are read as semicolon-separated with a decimal comma.
+
+## Excel: `read_workbook()` and `inspect_excel()`
+
+`readxl` reads the smallest rectangle around every non-empty cell, so a
+title becomes the header and a source note becomes a row. `read_workbook()`
+reads every sheet and finds the table on each instead, and one warning lists
+what was left outside:
+
+```{r}
+sheets <- read_workbook("data/report.xlsx")
+```
+
+Choose the area yourself when needed: a range, one per sheet, a named range
+from the workbook, or a defined Excel table.
+
+```{r}
+df     <- read_workbook("data/report.xlsx", range = "Report!B3:F40")
+sheets <- read_workbook("data/report.xlsx", range = c(Report = "B3:F40", Notes = NA))
+sales  <- read_workbook("data/report.xlsx", range = "Salesdata")
+tables <- read_workbook("data/report.xlsx", table = TRUE)
+```
+
+`inspect_excel()` runs the same check without reading, and returns the
+blocks outside the table as a tibble, empty when the layout is clean.
+
+## Presentable Excel output: `write_excel()`
+
+```{r}
+write_excel(list(Overview = overview, Detail = detail), "out.xlsx")
+write_excel(list(Appendix = extra), "out.xlsx", mode = "append")
+```
+
+Headers are bold and frozen, and large numbers get a thousand separator
+without rounding the stored values. Year-like columns are left alone.
+
+## Greenlandic TA files
+
+`read_ta()` reads both layouts and recognises which by itself.
+`write_ta()` writes the one you name, since it has to match the receiver,
+and refuses any value it cannot write exactly, listing every one.
+`convert_ta()` converts a file between the layouts.
+
+```{r}
+ta <- read_ta("ta.file")
+write_ta(ta, "out.ta", version = 2)
+convert_ta("old.ta", "new.ta", to = 2)
+```
+
+Both layouts are written as one small table each at the top of
+`R/ta.R`. The reader and the writer only follow those tables, so a change in
+a layout is a change there.
