@@ -14,11 +14,11 @@ files are supported.}
 
 \item{verbosity}{Level of status output. One of:
 \itemize{
-\item \code{"full"} – header, per-step spinners, and summary. Best for interactive
+\item \code{"full"} - header, per-step spinners, and summary. Best for interactive
 single-file use.
-\item \code{"compact"} – a single-line summary per file. Best when iterating over
+\item \code{"compact"} - a single-line summary per file. Best when iterating over
 many databases. This is the default.
-\item \code{"quiet"} – no output.
+\item \code{"quiet"} - no output.
 }}
 }
 \value{
@@ -30,11 +30,11 @@ executes a SQL query, and returns the result as a tibble.
 }
 \examples{
 \dontrun{
-# single file – use full output
+# single file - use full output
 data <- read_access("sales.mdb", "SELECT * FROM Customers",
                     verbosity = "full")
 
-# many files – compact output is the default
+# many files - compact output is the default
 files <- list.files("data", pattern = "\\\\.mdb$", full.names = TRUE)
 all_data <- lapply(files, \(f) read_access(f, "SELECT * FROM Sales"))
 }

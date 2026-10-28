@@ -114,7 +114,7 @@ read_workbook <- function(path, sheet = NULL, range = NULL, table = NULL,
   if (nrow(found) == 0) return(invisible())
 
   where <- ifelse(grepl("left|right", found$position), paste(found$position, "of"), found$position)
-  first <- ifelse(nchar(found$first) > 30, paste0(substr(found$first, 1, 29), "…"), found$first)
+  first <- ifelse(nchar(found$first) > 30, paste0(substr(found$first, 1, 27), "..."), found$first)
   bullets <- paste0(found$sheet, ": ", found$block, " ", where, " ", found$area, ' ("', first, '")')
   n_sheets <- length(unique(found$sheet))
   detected <- intersect(found$sheet, plan$sheet[plan$detected])

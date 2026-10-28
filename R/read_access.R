@@ -7,21 +7,21 @@
 #'   files are supported.
 #' @param sql A SQL query string to execute against the database.
 #' @param verbosity Level of status output. One of:
-#'   * `"full"` – header, per-step spinners, and summary. Best for interactive
+#'   * `"full"` - header, per-step spinners, and summary. Best for interactive
 #'     single-file use.
-#'   * `"compact"` – a single-line summary per file. Best when iterating over
+#'   * `"compact"` - a single-line summary per file. Best when iterating over
 #'     many databases. This is the default.
-#'   * `"quiet"` – no output.
+#'   * `"quiet"` - no output.
 #'
 #' @return A [`tibble`][tibble::tibble] containing the query result.
 #'
 #' @examples
 #' \dontrun{
-#' # single file – use full output
+#' # single file - use full output
 #' data <- read_access("sales.mdb", "SELECT * FROM Customers",
 #'                     verbosity = "full")
 #'
-#' # many files – compact output is the default
+#' # many files - compact output is the default
 #' files <- list.files("data", pattern = "\\.mdb$", full.names = TRUE)
 #' all_data <- lapply(files, \(f) read_access(f, "SELECT * FROM Sales"))
 #' }
