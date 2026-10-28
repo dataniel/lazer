@@ -1,0 +1,103 @@
+Readers and writers for the files of day-to-day statistical and economic
+work, in one place. *lazer* sounds like *læser*: reading is most of what
+it does, and it checks what it reads.
+
+``` r
+# install.packages("pak")
+pak::pak("dataniel/lazer")
+```
+
+## What it looks like
+
+``` r
+library(lazer)
+
+# Many files at once, in most formats; bind them, keeping the source
+panel <- read_files("data/dat{2020:2024}.parquet", names = 2020:2024,
+                    out = "bind", .id = "year")
+
+# Every sheet of a workbook, the table found on each sheet
+sheets <- read_workbook("data/report.xlsx")
+sales  <- read_workbook("data/report.xlsx", range = "Salesdata")   # a named range
+
+# Presentable Excel output
+write_excel(list(Overview = overview, Detail = detail), "out.xlsx")
+
+# Greenlandic TA files, both layouts
+ta <- read_ta("ta.file")                          # version recognised
+write_ta(ta, "ta_new.file", version = 2)
+convert_ta("old.ta", "new.ta", to = 2)
+```
+
+The readers share a few habits: quiet when all is well, every problem in
+one message instead of one rerun per problem, and nothing dropped or
+reinterpreted without a word.
+
+## Functions
+
+| Function                                                                                                                                      | Purpose                                                                                                                                  |
+|-----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [`read_files()`](https://dataniel.github.io/lazer/reference/read_files.md)                                                                    | Read many files at once (csv, parquet, Excel, SAS, Stata, SPSS, JSON, YAML, …), and optionally bind or unpack them                       |
+| [`read_workbook()`](https://dataniel.github.io/lazer/reference/read_workbook.md)                                                              | Read every sheet of a workbook, finding the table on each, or chosen ranges, named ranges or Excel tables; warn about cells left outside |
+| [`inspect_excel()`](https://dataniel.github.io/lazer/reference/inspect_excel.md)                                                              | List the blocks of cells outside the table in a workbook                                                                                 |
+| [`write_excel()`](https://dataniel.github.io/lazer/reference/write_excel.md)                                                                  | Write presentable xlsx: bold, frozen header and readable number formats; create, append or replace sheets                                |
+| [`read_access()`](https://dataniel.github.io/lazer/reference/read_access.md)                                                                  | Read from a Microsoft Access database via ODBC                                                                                           |
+| [`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md) / [`write_ta()`](https://dataniel.github.io/lazer/reference/write_ta.md) | Read and write Greenlandic TA files, version 1 (old) or 2 (140 characters)                                                               |
+| [`convert_ta()`](https://dataniel.github.io/lazer/reference/convert_ta.md)                                                                    | Convert a TA file between the two versions                                                                                               |
+
+## Relation to daos
+
+These functions used to live in
+[daos](https://github.com/dataniel/daos). The two packages are
+independent; use [`library(lazer)`](https://dataniel.github.io/lazer)
+for the readers and writers.
+
+# Package index
+
+## Many files at once
+
+- [`read_files()`](https://dataniel.github.io/lazer/reference/read_files.md)
+  : Read one or more files
+
+## Excel
+
+[`read_workbook()`](https://dataniel.github.io/lazer/reference/read_workbook.md)
+finds the table on each sheet;
+[`inspect_excel()`](https://dataniel.github.io/lazer/reference/inspect_excel.md)
+runs its layout check on its own.
+
+- [`read_workbook()`](https://dataniel.github.io/lazer/reference/read_workbook.md)
+  : Read the sheets or tables of an Excel workbook
+- [`inspect_excel()`](https://dataniel.github.io/lazer/reference/inspect_excel.md)
+  : Find cells outside the table in an Excel workbook
+- [`write_excel()`](https://dataniel.github.io/lazer/reference/write_excel.md)
+  : Write data frames to a presentable Excel file
+
+## Databases
+
+- [`read_access()`](https://dataniel.github.io/lazer/reference/read_access.md)
+  : Read data from a Microsoft Access database
+
+## Greenlandic TA files
+
+Both layouts: version 1 (old) and version 2 (140 characters).
+
+- [`read_ta()`](https://dataniel.github.io/lazer/reference/read_ta.md) :
+  Read a Greenlandic TA file
+- [`write_ta()`](https://dataniel.github.io/lazer/reference/write_ta.md)
+  : Write a Greenlandic TA file
+- [`convert_ta()`](https://dataniel.github.io/lazer/reference/convert_ta.md)
+  : Convert a Greenlandic TA file between the two layouts
+
+## Package
+
+- [`lazer`](https://dataniel.github.io/lazer/reference/lazer-package.md)
+  [`lazer-package`](https://dataniel.github.io/lazer/reference/lazer-package.md)
+  : lazer: read and write the files an economics team works with
+
+# Articles
+
+### All vignettes
+
+- [Get started with
+  lazer](https://dataniel.github.io/lazer/articles/lazer.md):
