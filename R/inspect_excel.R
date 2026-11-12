@@ -67,7 +67,7 @@
 #' inspect_excel("data/report.xlsx", table = TRUE)
 #'
 #' inspect_excel("data/report.xlsx", range = "Sheet1!B3:F40") |>
-#'   expectr::expect_empty(warn_msg = "cells outside the table")
+#'   inshape::ensure_empty(warn_msg = "cells outside the table")
 #' }
 #'
 #' @seealso [read_workbook()], which reads the same areas and runs this
