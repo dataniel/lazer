@@ -35,15 +35,15 @@ reinterpreted without a word.
 
 ## Functions
 
-| Function                                                                                                                                          | Purpose                                                                                                                                  |
-|---------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| [`read_files()`](https://dataniel.github.io/lazer/reference/read_files.md)                                                                        | Read many files at once (csv, parquet, Excel, SAS, Stata, SPSS, JSON, YAML, …), and optionally bind or unpack them                       |
-| [`read_workbook()`](https://dataniel.github.io/lazer/reference/read_workbook.md)                                                                  | Read every sheet of a workbook, finding the table on each, or chosen ranges, named ranges or Excel tables; warn about cells left outside |
-| [`inspect_excel()`](https://dataniel.github.io/lazer/reference/inspect_excel.md)                                                                  | List the blocks of cells outside the table in a workbook                                                                                 |
-| [`write_excel()`](https://dataniel.github.io/lazer/reference/write_excel.md)                                                                      | Write presentable xlsx: bold, frozen header and readable number formats; create, append or replace sheets                                |
-| [`read_access()`](https://dataniel.github.io/lazer/reference/read_access.md)                                                                      | Read from a Microsoft Access database via ODBC                                                                                           |
-| [`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md) / [`write_sut()`](https://dataniel.github.io/lazer/reference/write_sut.md) | Read and write Greenlandic supply and use table files (SUT; TA files in Danish), version 1 (old) or 2 (140 characters)                   |
-| [`convert_sut()`](https://dataniel.github.io/lazer/reference/convert_sut.md)                                                                      | Convert a SUT file between the two versions                                                                                              |
+| Function | Purpose |
+|----|----|
+| [`read_files()`](https://dataniel.github.io/lazer/reference/read_files.md) | Read many files at once (csv, parquet, Excel, SAS, Stata, SPSS, JSON, YAML, …), and optionally bind or unpack them |
+| [`read_workbook()`](https://dataniel.github.io/lazer/reference/read_workbook.md) | Read every sheet of a workbook, finding the table on each, or chosen ranges, named ranges or Excel tables; warn about cells left outside |
+| [`inspect_excel()`](https://dataniel.github.io/lazer/reference/inspect_excel.md) | List the blocks of cells outside the table in a workbook |
+| [`write_excel()`](https://dataniel.github.io/lazer/reference/write_excel.md) | Write presentable xlsx: bold, frozen header and readable number formats; create, append or replace sheets |
+| [`read_access()`](https://dataniel.github.io/lazer/reference/read_access.md) | Read from a Microsoft Access database via ODBC |
+| [`read_sut()`](https://dataniel.github.io/lazer/reference/read_sut.md) / [`write_sut()`](https://dataniel.github.io/lazer/reference/write_sut.md) | Read and write Greenlandic supply and use table files (SUT; TA files in Danish), version 1 (old) or 2 (140 characters) |
+| [`convert_sut()`](https://dataniel.github.io/lazer/reference/convert_sut.md) | Convert a SUT file between the two versions |
 
 ## Relation to daos
 
